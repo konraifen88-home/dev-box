@@ -1,0 +1,29 @@
+# Explanation of vars:
+#   name: Name which the docker image will get.
+#   image: The image to download/run.
+#   args: Configurational aruments for the docker image.
+#   cmd: Commands to start inside the docker image. If nothing is set, the containers default will be used.
+---
+- name: "uaa-db"
+  image: "postgres"
+  args: "-d -p '5432:5432'"
+  cmd: 
+- name: "uaa"
+  image: "konraifen88/unsecure-uaa:4.20.0"
+  args: "-d --link uaa-db:db -p 8080:8080"
+  cmd: 
+# RabbitMQ image, for more information see: https://hub.docker.com/_/rabbitmq/
+- name: "rabbitmq"
+  image: "rabbitmq:3-management"
+  args: "-d --hostname my-rabbit --name some-rabbit -e RABBITMQ_DEFAULT_USER=user -e RABBITMQ_DEFAULT_PASS=password -p '15672:15672' -p '4369:4369' -p '5672:5672'"
+  cmd: 
+# Redis image, for more information see: https://hub.docker.com/_/redis/
+- name: "redis"
+  image: "redis:3.2"
+  args: "-v '/var/redis/data:/data' -p '6379:6379'"
+  cmd: "redis-server --appendonly yes"
+# Redis Commander, for more information see: https://hub.docker.com/r/schickling/redis-commander/
+- name: "redis-commander"
+  image: "tenstartups/redis-commander"
+  args: "-d --link redis:redis -p 8081:8081"
+  cmd: "--redis-host redis"
